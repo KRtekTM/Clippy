@@ -13,6 +13,7 @@ namespace FuckingClippy
         {
             Utils.Log("Started");
             Application.EnableVisualStyles();
+            Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.Run(new MainForm());
         }
     }

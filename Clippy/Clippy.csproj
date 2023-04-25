@@ -18,7 +18,7 @@
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>FuckingClippy.Program</StartupObject>
+    <StartupObject>Clippy.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>main.ico</ApplicationIcon>

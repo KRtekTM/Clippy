@@ -2,7 +2,7 @@
 using System.Resources;
 using static System.Threading.Thread;
 
-namespace FuckingClippy
+namespace Clippy
 {
     partial class MainForm
     {

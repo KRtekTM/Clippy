@@ -14,7 +14,7 @@ using System.Text;
 
 */
 
-namespace FuckingClippy
+namespace Clippy
 {
     class Settings
     {

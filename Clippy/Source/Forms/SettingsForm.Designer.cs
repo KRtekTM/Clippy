@@ -1,4 +1,4 @@
-﻿namespace FuckingClippy
+﻿namespace Clippy
 {
     partial class SettingsForm
     {
@@ -210,7 +210,7 @@
             this.WebsiteLink.Size = new System.Drawing.Size(292, 21);
             this.WebsiteLink.TabIndex = 5;
             this.WebsiteLink.TabStop = true;
-            this.WebsiteLink.Text = "https://github.com/dd86k/FuckingClippy";
+            this.WebsiteLink.Text = "https://github.com/dd86k/Clippy";
             // 
             // WebsiteLabel
             // 

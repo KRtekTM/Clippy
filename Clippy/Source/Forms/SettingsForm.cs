@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace FuckingClippy
+namespace Clippy
 {
     public enum Tab : byte
     {

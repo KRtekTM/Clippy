@@ -1,4 +1,4 @@
-﻿namespace FuckingClippy
+﻿namespace Clippy
 {
     partial class MainForm
     {

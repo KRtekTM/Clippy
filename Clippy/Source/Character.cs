@@ -7,7 +7,7 @@ using static System.Diagnostics.Process;
 // - Images
 // - Choices (radio buttons)
 
-namespace FuckingClippy
+namespace Clippy
 {
     #region Animations
     public enum Animation : byte
@@ -425,7 +425,7 @@ random - I'll tell you something randomly."
 "ＭＡＸＩＭＵＭ ＡＲＭＯＲ",
 "Are you sure you want to click that?",
 "Seems like you're shitting out a letter...",
-"The program '[3440] FuckingClippy.exe' has exited with code -1 (0xFFFFFFFFFFFFFFFF).",
+"The program '[3440] Clippy.exe' has exited with code -1 (0xFFFFFFFFFFFFFFFF).",
 "<3?",
 "Hi, I'm a vegan.",
 "_suffer();",

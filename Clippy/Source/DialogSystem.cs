@@ -1,4 +1,4 @@
-﻿namespace FuckingClippy.Source
+﻿namespace Clippy.Source
 {
     class DialogSystem
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace FuckingClippy
+namespace Clippy
 {
     static class Program
     {

@@ -4,7 +4,7 @@ using System.IO;
 using System.Reflection;
 using static System.Reflection.Assembly;
 
-namespace FuckingClippy
+namespace Clippy
 {
     static class Utils
     {

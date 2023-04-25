@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 
-namespace FuckingClippy
+namespace Clippy
 {
     class BubbleForm : TransparentForm
     {

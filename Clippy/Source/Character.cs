@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Drawing;
+using System.Net.Http;
 using System.Windows.Forms;
 using static System.Diagnostics.Process;
+using Newtonsoft.Json;
 
 //TODO: Add support for...
 // - Images
@@ -94,224 +96,25 @@ namespace Clippy
 
         public static void ProcessInput(string userInput)
         {
-            string[] u = userInput.Split(' ');
+            PlayRandomAnimation();
 
-            if (u.Length > 0 && userInput.Length > 0)
-                switch (u[0].ToLower())
-                {
-                    /*
-                     * Main commands
-                     */
+            var client = new HttpClient();
+            var url = "https://free.churchless.tech/v1/chat/completions";
+            var content = new StringContent(
+                "{\"model\": \"gpt-3.5-turbo\",\"messages\": [{\"role\": \"user\", \"content\": \"" + userInput + "\"}]}",
+                System.Text.Encoding.UTF8,
+                "application/json"
+            );
+            var responseTask = client.PostAsync(url, content);
+            responseTask.Wait();
+            var response = responseTask.Result;
+            var resultTask = response.Content.ReadAsStringAsync();
+            resultTask.Wait();
+            var result = resultTask.Result;
 
-                    case "run":
-                        if (u.Length > 1)
-                            try
-                            {
-                                Start(userInput.Substring(4));
-                            }
-                            catch (Exception e)
-                            {
-                                Say($"I couldn't run that, sorry.\n({e.GetType().Name})");
-                            }
-                        else
-                            Say("I can't run, buddy.");
-                        break;
+            var json = JsonConvert.DeserializeObject<RootAnswer>(result);
 
-                    case "runc": case "runt":
-                        if (u.Length > 1)
-                            try
-                            {
-                                string ci = userInput.Substring(5);
-                                switch (Environment.OSVersion.Platform)
-                                {
-                                    case PlatformID.Win32NT:
-                                    // The "I doubt they're running that" club.
-                                    case PlatformID.Win32S:
-                                    case PlatformID.Win32Windows:
-                                    case PlatformID.WinCE:
-                                    case PlatformID.Xbox:
-                                        Start("cmd", "/c " + ci);
-                                        break;
-                                    case PlatformID.MacOSX:
-                                    case PlatformID.Unix:
-                                        Start($"x-terminal-emulator -e '{ci}'");
-                                        break;
-                                    default:
-                                        Say($"Sorry, I don't support {Environment.OSVersion.Platform}.");
-                                        break;
-                                }
-                            }
-                            catch (Exception e)
-                            {
-                                Say($"I couldn't run that, sorry.\n({e.GetType().Name})");
-                            }
-                        else
-                        {
-                            Say("Interesting...");
-                            PlayAnimation(Animation.Writing);
-                        }
-                        break;
-
-                    case "say":
-                        if (u.Length > 1)
-                            Say(userInput.Substring(4));
-                        else
-                            Say("What do you want me to say?");
-                        break;
-
-                    case "search":
-                        if (u.Length > 1)
-                            Start(
-                        $"https://www.google.com/search?q={Uri.EscapeDataString(userInput.Substring(7))}"
-                            );
-                        else
-                            Say("Tell me what to search for!");
-                        break;
-
-                    case "random":
-                        SayRandom();
-                        break;
-
-                    /*
-                     * Help section
-                     */
-
-                    case "help":
-                        if (u.Length > 1)
-                            switch (u[1].ToLower())
-                            {
-                            case "me":
-                                if (u.Length > 2)
-                                    switch (u[2].ToLower())
-                                    {
-                                    case "suicide":
-                                    case "die":
-                                        Say("Please seek professional help.");
-                                        break;
-
-                                    case "kill":
-                                        if (u.Length > 3)
-                                            switch (u[3].ToLower())
-                                            {
-                                            case "myself":
-                                                Say("Please seek professional help.");
-                                                break;
-                                            default:
-                                                Say("I won't do your dirty job.");
-                                                break;
-                                            }
-                                        else
-                                            Say("WHO?");
-                                        break;
-
-                                    default:
-                                        Say("Can't help you with that yet.");
-                                        break;
-                                    }
-                                else
-                                    Say(@"Help you in what? Have you tried the ""help"" command?");
-                                break;
-
-                            case "yourself":
-                                Say("How kind! But no, I'm fine");
-                                break;
-
-                            default:
-                                Say("WHO");
-                                break;
-                            }
-                        else
-                            Say(
-@"Here are some commands:
-
-run <t> - Run an app from PATH.
-say <t> - Make me say something.
-search <t> - Search on Google.com.
-random - I'll tell you something randomly."
-                            );
-                        break;
-
-                    /*
-                     * Small talk.
-                     */
-
-                    case "hey": case "hello": case "hi": case "greetings":
-                        Say("Hello!");
-                        break;
-
-                    case "screw": case "fuck": case "frick":
-                        if (u.Length > 1)
-                            switch (u[1].ToLower())
-                            {
-                            case "me":
-                                Say("No thanks, I'll pass.");
-                                break;
-                            case "u": case "you":
-                                Say("Hey now buddy, I can always shutdown your computer, you know?");
-                                break;
-                            case "off":
-                                Say("Okay!");
-                                DelayExit();
-                                break;
-                            default:
-                                Say("WHO?");
-                                break;
-                            }
-                        else
-                            Say("WHO?");
-                        break;
-
-                    case "do":
-                        if (u.Length > 1)
-                        {
-                            switch (u[1].ToLower())
-                            {
-                                case "my":
-                                    if (u.Length > 2)
-                                    {
-                                        switch (u[2].ToLower())
-                                        {
-                                            case "hw": case "homework": case "homeworks":
-                                                Say("No, I won't do your homework. Do it yourself.");
-                                                break;
-
-                                            case "work": case "chores":
-                                                Say("Sure! Just pay me 25,000$USD/Hour.");
-                                                break;
-
-                                            default: // Or maybe just make everything fall here?
-                                                Say($@"No, I won't do your ""{u[2]}"".");
-                                                break;
-                                        }
-                                    }
-                                    break;
-
-                                case "me":
-                                    Say("No thanks");
-                                    break;
-
-                                default:
-                                    Say("Do what now?");
-                                    break;
-                            }
-                        }
-                        break;
-
-                    case "version":
-                        Say($"You're using version {Utils.Project.GetName().Version}");
-                        break;
-
-                    case "quit": case "exit": case "close": case "die":
-                        Say("Okay!");
-                        DelayExit();
-                        break;
-
-                    default:
-                        Say("What was that about?");
-                        break;
-                }
-            else
-                Say("Not even a hello?");
+            Say(json.choices[0].message.content);
         }
 
         private static void DelayExit()
@@ -323,7 +126,7 @@ random - I'll tell you something randomly."
         #endregion
 
     #region Dialog system
-    static class DialogSystem
+    public static class DialogSystem
     {
         //TODO: #11 Re-use BubbleForm in Character.DialogSystem
 
@@ -357,22 +160,23 @@ random - I'll tell you something randomly."
             BubbleForm.Show();
         }
 
-        static Control[] GetPrompt()
+        static Control[] GetPrompt(string answer = "")
         {
             Control[] ca = new Control[2];
 
             ca[0] = new Label()
             {
+                Location = new Point(4, 6),
                 AutoSize = true,
-                Text = "What would you like to do?",
-                Location = new Point(4, 8),
-                Font = DefaultFont
+                MaximumSize = new Size(192, 0),
+                Font = DefaultFont,
+                Text = answer == "" ? "What would you like to ask?" : answer,
             };
             ca[1] = new TextBox()
             {
                 Size = new Size(190, 36),
                 Font = DefaultFont,
-                Location = new Point(4, 30),
+                Location = new Point(4, ca[0].PreferredSize.Height + 16),
                 Multiline = true
             };
             ca[1].KeyDown += (s, e) =>
@@ -402,7 +206,8 @@ random - I'll tell you something randomly."
                 GC.Collect(3, GCCollectionMode.Forced);
             }
 
-            BubbleForm = GetBaseForm(GetSay(text));
+            //BubbleForm = GetBaseForm(GetSay(text));
+            BubbleForm = GetBaseForm(GetPrompt(text));
 
             BubbleForm.Show();
         }
@@ -494,7 +299,16 @@ random - I'll tell you something randomly."
 
             return f;
         }
-    }
+
+        public static void BubbleFormShow()
+        {
+            BubbleForm.Show();
+        }
+        public static void BubbleFormHide()
+        {
+            BubbleForm.Hide();
+        }
+        }
     #endregion
 
     #region Animation system
